@@ -2,15 +2,15 @@ package pathreader
 
 import (
 	"fmt"
-	carv2 "github.com/ipld/go-car/v2"
 	"golang.org/x/xerrors"
 	"io"
+	"os"
 )
 
 //PathReader is a reader which will read from a shared path file
 type PathReader struct {
-	Path string
-
+	Path   string
+	closed bool
 	reader io.Reader
 	closer io.Closer
 }
@@ -25,32 +25,32 @@ func (pr *PathReader) Seek(offset int64, whence int) (int64, error) {
 
 func (pr *PathReader) Close() error {
 	fmt.Println("path reader close")
-	pr.Path = ""
-	if pr.closer != nil {
-		return pr.closer.Close()
+	if !pr.closed {
+		pr.closed = true
+
+		if pr.closer != nil {
+			return pr.closer.Close()
+		}
 	}
 	return nil
 }
 
 func (pr *PathReader) Read(p []byte) (n int, err error) {
+	if pr.closed {
+		return 0, xerrors.Errorf("file reader closed")
+	}
+
 	if pr.reader == nil {
 		fmt.Println("path reader read")
-		rd, err := carv2.OpenReader(pr.Path)
+		fd, err := os.Open(pr.Path)
+
 		if err != nil {
-			return 0, err
-		}
-		sr, err := rd.DataReader()
-		if err != nil {
+			pr.closed = true
 			return 0, err
 		}
 
-		// mark the reader as reading
-		pr.Path = ""
-		pr.reader = sr
-		pr.closer = rd
-	}
-	if pr.reader == nil {
-		return 0, xerrors.Errorf("file reader closed")
+		pr.reader = fd
+		pr.closer = fd
 	}
 
 	return pr.reader.Read(p)
