@@ -10,11 +10,9 @@ import (
 )
 
 type QiniuReader struct {
-	Key string
-	// filePath is optional
-	filePath string
-	closed   bool
-	body     io.ReadCloser
+	Key    string
+	closed bool
+	body   io.ReadCloser
 }
 
 func (reader *QiniuReader) SeekStart() error {
