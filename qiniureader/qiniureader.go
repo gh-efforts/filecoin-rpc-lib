@@ -62,6 +62,10 @@ func (reader *QiniuReader) Read(p []byte) (n int, err error) {
 			return 0, err
 		}
 
+		if resp.StatusCode != http.StatusOK {
+			return 0, xerrors.New(resp.Status)
+		}
+
 		reader.body = resp.Body
 	}
 
