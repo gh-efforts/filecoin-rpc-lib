@@ -1,4 +1,4 @@
-module github.com/bitrainforest/filecoin-rpc-lib
+module github.com/gh-efforts/filecoin-rpc-lib
 
 go 1.18
 
