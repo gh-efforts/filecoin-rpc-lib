@@ -1,12 +1,10 @@
 package qiniureader
 
 import (
-	"encoding/json"
-	"github.com/qiniupd/qiniu-go-sdk/syncdata/operation"
-	"golang.org/x/xerrors"
+	"fmt"
+	"github.com/service-sdk/go-sdk-qn/syncdata/operation"
 	"io"
 	"net/http"
-	"os"
 )
 
 type QiniuReader struct {
@@ -19,7 +17,7 @@ func (reader *QiniuReader) SeekStart() error {
 	return nil
 }
 
-func (reader *QiniuReader) Seek(offset int64, whence int) (int64, error) {
+func (reader *QiniuReader) Seek(_ int64, _ int) (int64, error) {
 	return 0, nil
 }
 
@@ -36,34 +34,17 @@ func (reader *QiniuReader) Close() error {
 
 func (reader *QiniuReader) Read(p []byte) (n int, err error) {
 	if reader.closed {
-		return 0, xerrors.Errorf("file reader closed")
+		return 0, fmt.Errorf("file reader closed")
 	}
 
 	if reader.body == nil {
-		configPath := os.Getenv("QINIU_READER_CONFIG_PATH")
-		configBytes, err := os.ReadFile(configPath)
-
-		if err != nil {
-			return 0, err
-		}
-
-		var config operation.Config
-
-		err = json.Unmarshal(configBytes, &config)
-
-		if err != nil {
-			return 0, err
-		}
-
-		var resp *http.Response
-		resp, err = operation.NewDownloader(&config).DownloadRaw(reader.Key, http.Header{})
-
+		resp, err := operation.NewDownloaderV2().DownloadRaw(reader.Key, http.Header{})
 		if err != nil {
 			return 0, err
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			return 0, xerrors.New(resp.Status)
+			return 0, fmt.Errorf(resp.Status)
 		}
 
 		reader.body = resp.Body

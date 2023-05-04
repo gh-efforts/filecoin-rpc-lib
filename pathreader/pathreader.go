@@ -2,12 +2,11 @@ package pathreader
 
 import (
 	"fmt"
-	"golang.org/x/xerrors"
 	"io"
 	"os"
 )
 
-//PathReader is a reader which will read from a shared path file
+// PathReader is a reader which will read from a shared path file
 type PathReader struct {
 	Path   string
 	closed bool
@@ -37,7 +36,7 @@ func (pr *PathReader) Close() error {
 
 func (pr *PathReader) Read(p []byte) (n int, err error) {
 	if pr.closed {
-		return 0, xerrors.Errorf("file reader closed")
+		return 0, fmt.Errorf("file reader closed")
 	}
 
 	if pr.reader == nil {
