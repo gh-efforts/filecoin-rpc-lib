@@ -9,5 +9,5 @@ require (
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20191005200804-aed5e4c7ecf9 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 )
