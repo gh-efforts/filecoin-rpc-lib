@@ -2,10 +2,7 @@ module github.com/gh-efforts/filecoin-rpc-lib
 
 go 1.18
 
-require (
-	github.com/qiniupd/qiniu-go-sdk v1.4.0
-	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f
-)
+require github.com/service-sdk/go-sdk-qn v1.5.0
 
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
